@@ -17,6 +17,7 @@ const City = ({ branchesData }) => {
   const router = useRouter()
   const { cityParams = '' } = router.query
   const [cityData, setCityData] = useState({})
+  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
 
   const titleCase = string =>
@@ -27,9 +28,10 @@ const City = ({ branchesData }) => {
       cityObj => titleCase(cityObj.city || '') === titleCase(cityParams || '')
     )
     setCityData(filterBranches[0] || {})
+    setLoading(false)
   }, [])
 
-  return JSON.stringify(cityData) === "{}" ? <NotFound /> : (
+  return JSON.stringify(cityData) === "{}" && loading ? <NotFound /> : (
     <Layout title={titleCase(cityParams)}>
       <Navbar city={cityParams} />
       <Container
