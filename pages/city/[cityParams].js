@@ -11,6 +11,7 @@ import Layout from '../../components/layouts/article'
 import Navbar from '../../components/navbar'
 import BranchInfo from '../../components/branch-info'
 import BranchIgTags from '../../components/branch-ig-tags'
+import NotFound from '../404'
 
 const City = ({ branchesData }) => {
   const router = useRouter()
@@ -28,7 +29,7 @@ const City = ({ branchesData }) => {
     setCityData(filterBranches[0] || {})
   }, [])
 
-  return (
+  return JSON.stringify(cityData) === "{}" ? <NotFound /> : (
     <Layout title={titleCase(cityParams)}>
       <Navbar city={cityParams} />
       <Container
