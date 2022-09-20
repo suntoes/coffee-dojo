@@ -7,7 +7,7 @@ const Main = ({ children }) => {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Coffee Dojo's website" />
-        <meta name="author" content="Coffee Dojo" />
+        <meta name="author" content="Mar Santos" />
         <link rel="apple-touch-icon" href="apple-touch-icon.png" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="/favicon.ico" />
