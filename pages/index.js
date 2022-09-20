@@ -204,20 +204,16 @@ const Home = ({ mainIgFeed, branchesData }) => {
   return (
     <>
       <Layout>
-        {branchesData?.map((cityObj, i) => (
-          <ImageBackground
-            key={`image-bg-${i}`}
-            visibility={i === currentBackgroundIndex ? 'visible' : 'hidden'}
-            passRef={elem => {
-              refs.current.fullBoxRef = elem
-            }}
-            opacity={bgOpacity}
-            background={`url("${
-              'https://drive.google.com/uc?export=view&id=' +
-              cityObj.gDriveMainPic
-            }") no-repeat center center fixed`}
-          />
-        ))}
+        <ImageBackground
+          passRef={elem => {
+            refs.current.fullBoxRef = elem
+          }}
+          opacity={bgOpacity}
+          background={`url("${
+            'https://drive.google.com/uc?export=view&id=' +
+            branchesData[currentBackgroundIndex].gDriveMainPic
+          }") no-repeat center center fixed`}
+        />
         {breakCount > 0 && (
           <PrimaryTitle
             zIndex={bgOpacity >= 1 ? 99 : 1}

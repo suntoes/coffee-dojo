@@ -11,13 +11,11 @@ import Layout from '../../components/layouts/article'
 import Navbar from '../../components/navbar'
 import BranchInfo from '../../components/branch-info'
 import BranchIgTags from '../../components/branch-ig-tags'
-import NotFound from '../404'
 
 const City = ({ branchesData }) => {
   const router = useRouter()
   const { cityParams = '' } = router.query
   const [cityData, setCityData] = useState({})
-  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
 
   const titleCase = string =>
@@ -28,10 +26,9 @@ const City = ({ branchesData }) => {
       cityObj => titleCase(cityObj.city || '') === titleCase(cityParams || '')
     )
     setCityData(filterBranches[0] || {})
-    setLoading(false)
   }, [])
 
-  return JSON.stringify(cityData) === "{}" && loading ? <NotFound /> : (
+  return (
     <Layout title={titleCase(cityParams)}>
       <Navbar city={cityParams} />
       <Container

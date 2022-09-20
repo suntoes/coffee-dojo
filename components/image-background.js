@@ -1,9 +1,8 @@
 import { Box } from '@chakra-ui/react'
 
-const ImageBackground = ({ passRef, visibility, opacity, background }) => (
+const ImageBackground = ({ passRef, opacity, background }) => (
   <Box
     ref={passRef}
-    visibility={visibility}
     opacity={opacity}
     position="fixed"
     boxSize="full"
