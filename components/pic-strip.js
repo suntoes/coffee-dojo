@@ -74,23 +74,6 @@ const PicStrip = ({
         transform={`translateY(${picStripH * -(i + 1) + yOffsetValue}px)`}
       >
         {subPicStripArr?.map((url, _i) =>
-          url ? (
-            (_i + 1) % 2 === 0 ? (
-              <IgSmallPic
-                yTransformValue={yTransformValue}
-                key={`sub-pic-strip-0-${_i}`}
-                src={url}
-                backgroundTriggerPoint={backgroundTriggerPoint}
-                backgroundTriggerCallback={backgroundTriggerCallback}
-              />
-            ) : (
-              <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
-            )
-          ) : (
-            <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
-          )
-        )}
-        {
           url === 0 ? (
             <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
           ) :
@@ -109,7 +92,7 @@ const PicStrip = ({
               <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
             )
           )
-        }
+        )}
       </PicSubStrip>
     ))}
   </Container>
