@@ -38,7 +38,24 @@ const PicStrip = ({
       transform={`translateY(${picStripH * -0 + yOffsetValue}px)`}
     >
       {mainIgFeed?.map((url, _i) =>
-        url ? (
+        url === 0 ? (
+          <CoffeeDojoLogo
+            passRef={elem => {
+              if (_i === 11) {
+                refs.current.secToLastLogoRef = elem
+              } else if (_i === 15) {
+                refs.current.lastLogoRef = elem
+              } else return undefined
+            }}
+            key={`sub-pic-strip-0-${_i}`}
+          />
+        ) :
+        url === 1 ? (
+          <CoffeeDojoLogo
+            passRef={undefined}
+            key={`sub-pic-strip-0-${_i}`}
+          />
+        ) : (
           (_i + 1) % 2 === 0 ? (
             <IgSmallPic
               yTransformValue={yTransformValue}
@@ -50,17 +67,6 @@ const PicStrip = ({
           ) : (
             <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
           )
-        ) : (
-          <CoffeeDojoLogo
-            passRef={elem => {
-              if (_i === 11) {
-                refs.current.secToLastLogoRef = elem
-              } else if (_i === 15) {
-                refs.current.lastLogoRef = elem
-              } else return undefined
-            }}
-            key={`sub-pic-strip-0-${_i}`}
-          />
         )
       )}
     </PicSubStrip>
