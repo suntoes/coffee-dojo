@@ -51,10 +51,7 @@ const PicStrip = ({
           />
         ) :
         url === 1 ? (
-          <CoffeeDojoLogo
-            passRef={undefined}
-            key={`sub-pic-strip-0-${_i}`}
-          />
+          <CoffeeDojoLogo key={`sub-pic-strip-0-${_i}`} />
         ) : (
           (_i + 1) % 2 === 0 ? (
             <IgSmallPic
@@ -93,6 +90,26 @@ const PicStrip = ({
             <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
           )
         )}
+        {
+          url === 0 ? (
+            <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
+          ) :
+          url === 1 ? (
+            <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
+          ) : (
+            (_i + 1) % 2 === 0 ? (
+              <IgSmallPic
+                yTransformValue={yTransformValue}
+                key={`sub-pic-strip-0-${_i}`}
+                src={url}
+                backgroundTriggerPoint={backgroundTriggerPoint}
+                backgroundTriggerCallback={backgroundTriggerCallback}
+              />
+            ) : (
+              <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
+            )
+          )
+        }
       </PicSubStrip>
     ))}
   </Container>
