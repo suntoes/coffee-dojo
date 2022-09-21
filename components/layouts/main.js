@@ -14,7 +14,9 @@ const Main = ({ children }) => {
         <meta property="og:site_name" content="Coffee Dojo" />
         <meta name="og:title" content="Coffee Dojo" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="card.png" />
+        <meta property="og:url" content="%PUBLIC_URL%/" />
+        <meta property="og:image" content="%PUBLIC_URL%/card.png" />
+        <meta property="og:description" content="A Japanese inspired coffee shop." />
         <title>Coffee Dojo</title>
       </Head>
 
