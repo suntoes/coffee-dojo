@@ -28,7 +28,7 @@ const PicStrip = ({
   <Container
     opacity={opacity}
     transition="opacity 1500ms"
-    transform={`translateY(${yTransformValue}px)`}
+    transform={`translate3d(0px, ${yTransformValue}px, 0px)`}
     centerContent
   >
     <PicSubStrip
