@@ -45,7 +45,7 @@ const City = ({ branchesData }) => {
         >
           <NextLink href={'/'} passHref scroll={false}>
             <Link
-              fontSize="0.8em"
+              fontSize="0.7em"
               maxWidth="80px"
               color="#848484"
               letterSpacing={[0, 1, 2]}
@@ -69,7 +69,7 @@ const City = ({ branchesData }) => {
                 <>
                   <Text
                     onClick={() => setPage(i)}
-                    fontSize="0.8em"
+                    fontSize="0.7em"
                     fontWeight={i === page ? 900 : 400}
                     color={i === page ? 'initial' : '#848484'}
                     letterSpacing={i === page ? [2, 4, 6] : [0, 1, 2]}
