@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AspectRatio, Box, useColorModeValue } from '@chakra-ui/react'
 
 import { motion, AnimatePresence } from 'framer-motion'
@@ -38,6 +38,14 @@ const Gallery = ({ images = [] }) => {
     setPage([page + newDirection, newDirection])
   }
 
+  useEffect(() => {
+    clearTimeout(localStorage.getItem("autoSwipe"))
+    const autoSwipe = setTimeout(() => {
+      paginate(1)
+    }, 5000)
+    localStorage.setItem("autoSwipe", autoSwipe)
+  }, [page])
+  
   return (
     <AspectRatio
       width={{ base: '100%', md: '80%' }}
