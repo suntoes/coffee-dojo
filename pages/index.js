@@ -29,32 +29,41 @@ const Home = ({ mainIgFeed, branchesData }) => {
 
   const stopScroll = () => {
     clearInterval(localStorage.getItem('scrollInterval'))
+    clearTimeout(localStorage.getItem('backgroundChangeTimeout'))
     clearTimeout(localStorage.getItem('scrollTimeout'))
   }
 
-  const breakScroll = prevYCount => {
+  const breakScroll = (prevYCount, prevBreakCount = 0, prevBgIndex = 0) => {
     if (!docIsVisible) return
     stopScroll()
 
     setOnBreak(true)
-    setBreakCount(prev => prev + 1)
-  
+    setBreakCount(prevBreakCount + 1)
 
     setStripOpacity(0.3)
     setTimeout(() => {
       setStripOpacity(1)
     }, 2800)
 
+    const newBgIndex = prevBgIndex + 1 < branchesData?.length ? prevBgIndex + 1 : 0
+
     const scrollTimeout = setTimeout(() => {
       setOnBreak(false)
       setTransitionIsExit(true)
-      playScroll({ prevYCount })
+      playScroll(false, prevYCount, prevBreakCount + 1, newBgIndex)
+
+      const backgroundChangeTimeout = setTimeout(() => {
+        setTransitionIsExit(false)
+        setCurrentBackgroundIndex(newBgIndex)
+      }, 7000)
+
+      localStorage.setItem('backgroundChangeTimeout', backgroundChangeTimeout)
     }, 3000)
 
     localStorage.setItem('scrollTimeout', scrollTimeout)
   }
 
-  const playScroll = ({ initial, prevYCount } = { initial: false }) => {
+  const playScroll = (initial, prevYCount, prevBreakCount=0, prevBgIndex=0) => {
     stopScroll()
     let midTriggerCount = 0
     let midTriggerInitialCount = midTriggerInitial
@@ -63,31 +72,24 @@ const Home = ({ mainIgFeed, branchesData }) => {
     const scrollInterval = setInterval(() => {
       yCount++
       if (yCount >= picStripH) yCount = 0
-      setYTransformValue(yCount)
+      const picStripNode = refs.current.picStrip
+      picStripNode.style.transform = `translate3d(0px, ${yCount}px, 0px)`
 
       if (initial) {
         if (midTriggerInitialCount <= 1) {
           setMidTriggerInitial(0)
-          breakScroll(yCount)
+          breakScroll(yCount, prevBreakCount, prevBgIndex)
         }
         midTriggerInitialCount--
       } else {
         midTriggerCount++
         if (midTriggerCount >= midTriggerValue) {
           midTriggerCount = 0
-          breakScroll(yCount)
+          breakScroll(yCount, prevBreakCount, prevBgIndex)
         }
       }
     }, msPerPixelScroll)
     localStorage.setItem('scrollInterval', scrollInterval)
-  }
-
-  const backgroundTriggerCallback = () => {
-    setTimeout(() => {setTransitionIsExit(false)}, 1500)
-    const newBgIndex = currentBackgroundIndex + 1
-    setCurrentBackgroundIndex(
-      newBgIndex < branchesData?.length ? newBgIndex : 0
-    )
   }
 
   useEffect(() => {
@@ -162,7 +164,7 @@ const Home = ({ mainIgFeed, branchesData }) => {
   }, [fullBoxH])
 
   useEffect(() => {
-    if (midTriggerInitial) playScroll({ initial: true })
+    if (midTriggerInitial) playScroll(true)
   }, [midTriggerInitial])
 
   return (
@@ -207,7 +209,6 @@ const Home = ({ mainIgFeed, branchesData }) => {
             mainIgFeed={mainIgFeed}
             addPicStripArr={addPicStripArr}
             backgroundTriggerPoint={Math.round(fullBoxH / 2)}
-            backgroundTriggerCallback={backgroundTriggerCallback}
           />
         </Box>
       </Layout>

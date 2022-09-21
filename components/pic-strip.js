@@ -26,9 +26,11 @@ const PicStrip = ({
   backgroundTriggerCallback
 }) => (
   <Container
+    ref={elem => {
+      refs.current.picStrip = elem
+    }}
     opacity={opacity}
     transition="opacity 1500ms"
-    transform={`translate3d(0px, ${yTransformValue}px, 0px)`}
     centerContent
   >
     <PicSubStrip
