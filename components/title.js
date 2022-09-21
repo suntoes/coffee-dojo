@@ -29,7 +29,7 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => (
           letterSpacing={[3, 6, 8]}
           color={'white'}
           textAlign="right"
-          fontSize={['0.8em', '1.25em', '2em']}
+          fontSize={['0.8em', '1.25em', '1.5em']}
         >
           <motion.div
             key={motionKey}
@@ -63,7 +63,7 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => (
           pl={['3px', '6px', '8px']}
           letterSpacing={[3, 6, 8]}
           color={'white'}
-          fontSize={['0.8em', '1.25em', '2em']}
+          fontSize={['0.8em', '1.25em', '1.5em']}
         >
           <motion.div
             key={motionKey}

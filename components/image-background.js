@@ -1,9 +1,10 @@
 import { Box } from '@chakra-ui/react'
 
-const ImageBackground = ({ passRef, opacity, background }) => (
+const ImageBackground = ({ passRef, opacity, transition, background }) => (
   <Box
     ref={passRef}
     opacity={opacity}
+    transition={transition}
     position="fixed"
     boxSize="full"
     zIndex={-1}

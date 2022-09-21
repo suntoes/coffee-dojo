@@ -10,7 +10,6 @@ import { PrimaryTitle } from '../components/title'
 const Home = ({ mainIgFeed, branchesData }) => {
   const [fullBoxH, setFullBoxH] = useState(1)
   const [picStripH, setPicStripH] = useState(1)
-  const [bgOpacity, setBgOpacity] = useState(0)
   const [yOffsetValue, setYOffsetValue] = useState(0)
   const [yTransformValue, setYTransformValue] = useState(0)
   const [midTriggerValue, setMidTriggerValue] = useState(0)
@@ -19,21 +18,17 @@ const Home = ({ mainIgFeed, branchesData }) => {
   const [addPicStripArr, setAddPicStripArr] = useState([])
 
   const [breakCount, setBreakCount] = useState(0)
+  const [onBreak, setOnBreak] = useState(false)
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0)
+  const [transitionIsExit, setTransitionIsExit] = useState(false)
   const [docIsVisible, setDocIsVisible] = useState(true)
 
   const refs = useRef({})
 
-  const msPerPixelScroll = 20
+  const msPerPixelScroll = 18
 
   const stopScroll = () => {
-    clearInterval(localStorage.getItem('bgOpacityIntervalUndo'))
-    clearInterval(localStorage.getItem('bgOpacityInterval'))
-    clearInterval(localStorage.getItem('stripOpacityIntervalUndo'))
-    clearInterval(localStorage.getItem('stripOpacityInterval'))
     clearInterval(localStorage.getItem('scrollInterval'))
-    clearTimeout(localStorage.getItem('bgOpacityUndoTimeout'))
-    clearTimeout(localStorage.getItem('stripOpacityUndoTimeout'))
     clearTimeout(localStorage.getItem('scrollTimeout'))
   }
 
@@ -41,52 +36,21 @@ const Home = ({ mainIgFeed, branchesData }) => {
     if (!docIsVisible) return
     stopScroll()
 
+    setOnBreak(true)
     setBreakCount(prev => prev + 1)
+  
 
-    let bgOpacityCount = 0.8
-
-    const bgOpacityInterval = setInterval(() => {
-      if (bgOpacityCount > 1) return clearInterval(bgOpacityInterval)
-      bgOpacityCount += 0.02
-      setBgOpacity(bgOpacityCount)
-    }, 30)
-
-    const bgOpacityUndoTimeout = setTimeout(() => {
-      let bgOpacityCountUndo = 1
-      const bgOpacityIntervalUndo = setInterval(() => {
-        if (bgOpacityCountUndo < 0.8)
-          return clearInterval(bgOpacityIntervalUndo)
-        bgOpacityCountUndo -= 0.02
-        setBgOpacity(bgOpacityCountUndo)
-      }, 30)
-      localStorage.setItem('bgOpacityIntervalUndo', bgOpacityIntervalUndo)
-    }, 2670)
-
-    let stripOpacityCount = 1
-
-    const stripOpacityInterval = setInterval(() => {
-      if (stripOpacityCount < 0.3) return clearInterval(stripOpacityInterval)
-      stripOpacityCount -= 0.02
-      setStripOpacity(stripOpacityCount)
-    }, 20)
-
+    setStripOpacity(0.3)
     setTimeout(() => {
-      let stripOpacityCountUndo = 0.3
-      const stripOpacityIntervalUndo = setInterval(() => {
-        if (stripOpacityCountUndo > 1)
-          return clearInterval(stripOpacityIntervalUndo)
-        stripOpacityCountUndo += 0.02
-        setStripOpacity(stripOpacityCountUndo)
-      }, 30)
-    }, 3000)
+      setStripOpacity(1)
+    }, 2800)
 
     const scrollTimeout = setTimeout(() => {
+      setOnBreak(false)
+      setTransitionIsExit(true)
       playScroll({ prevYCount })
     }, 3000)
 
-    localStorage.setItem('bgOpacityInterval', bgOpacityInterval)
-    localStorage.setItem('bgOpacityUndoTimeout', bgOpacityUndoTimeout)
-    localStorage.setItem('stripOpacityInterval', stripOpacityInterval)
     localStorage.setItem('scrollTimeout', scrollTimeout)
   }
 
@@ -95,9 +59,6 @@ const Home = ({ mainIgFeed, branchesData }) => {
     let midTriggerCount = 0
     let midTriggerInitialCount = midTriggerInitial
     let yCount = prevYCount || yTransformValue
-
-    const getBgOpacity = count =>
-      Math.round(Math.abs(count / (midTriggerValue / 2) - 1) * 100) / 100 - 0.2
 
     const scrollInterval = setInterval(() => {
       yCount++
@@ -109,10 +70,8 @@ const Home = ({ mainIgFeed, branchesData }) => {
           setMidTriggerInitial(0)
           breakScroll(yCount)
         }
-        setBgOpacity(getBgOpacity(midTriggerInitialCount))
         midTriggerInitialCount--
       } else {
-        setBgOpacity(getBgOpacity(midTriggerCount))
         midTriggerCount++
         if (midTriggerCount >= midTriggerValue) {
           midTriggerCount = 0
@@ -124,6 +83,7 @@ const Home = ({ mainIgFeed, branchesData }) => {
   }
 
   const backgroundTriggerCallback = () => {
+    setTimeout(() => {setTransitionIsExit(false)}, 1500)
     const newBgIndex = currentBackgroundIndex + 1
     setCurrentBackgroundIndex(
       newBgIndex < branchesData?.length ? newBgIndex : 0
@@ -131,6 +91,8 @@ const Home = ({ mainIgFeed, branchesData }) => {
   }
 
   useEffect(() => {
+    setOnBreak(false)
+    setTransitionIsExit(false)
     setFullBoxH(refs.current.fullBoxRef?.clientHeight)
     setPicStripH(refs.current.picStripContainerRef.clientHeight)
 
@@ -145,6 +107,8 @@ const Home = ({ mainIgFeed, branchesData }) => {
           refs.current?.picStripContainerRef?.clientHeight ||
             refs.current?.fullBoxRef?.clientHeight
         )
+        setTransitionIsExit(false)
+        setOnBreak(false)
       }, 500)
     }
 
@@ -204,25 +168,32 @@ const Home = ({ mainIgFeed, branchesData }) => {
   return (
     <>
       <Layout>
-        <ImageBackground
-          passRef={elem => {
-            refs.current.fullBoxRef = elem
-          }}
-          opacity={bgOpacity}
-          background={`url("${
-            'https://drive.google.com/uc?export=view&id=' +
-            branchesData[currentBackgroundIndex].gDriveMainPic
-          }") no-repeat center center fixed`}
-        />
+        {
+          branchesData.map(({gDriveMainPic}, i) =>
+            <ImageBackground
+              key={`branch-background-${i}`}
+              passRef={elem => {
+                refs.current.fullBoxRef = elem
+              }}
+              opacity={i === currentBackgroundIndex && !transitionIsExit ? 1 : 0}
+              transition={
+                transitionIsExit ?
+                "opacity 4000ms cubic-bezier(0, 0, 0.1, 1) 0s" : 
+                "opacity 4000ms cubic-bezier(0.99, 0, 1, 1) 0s"
+              }
+              background={`url("https://drive.google.com/uc?export=view&id=${gDriveMainPic}") no-repeat center center fixed`}
+            />
+          )
+        }
         {breakCount > 0 && (
           <PrimaryTitle
-            zIndex={bgOpacity >= 1 ? 99 : 1}
+            zIndex={onBreak ? 99 : 1}
             city={branchesData[currentBackgroundIndex].city}
             motionKey={breakCount}
           />
         )}
         <Box
-          zIndex={bgOpacity < 1 ? 99 : 1}
+          zIndex={onBreak ? 1 : 99}
           position={'fixed'}
           boxSize={'full'}
           background="none"
