@@ -27,6 +27,8 @@ const Home = ({ mainIgFeed, branchesData }) => {
 
   const msPerPixelScroll = 18
 
+  const Multiplier = (val) => val * (fullBoxH > 1000 ? 1 : 1000)
+
   const stopScroll = () => {
     clearInterval(localStorage.getItem('scrollInterval'))
     clearTimeout(localStorage.getItem('backgroundChangeTimeout'))
@@ -52,10 +54,11 @@ const Home = ({ mainIgFeed, branchesData }) => {
       setTransitionIsExit(true)
       playScroll(false, prevYCount, prevBreakCount + 1, newBgIndex)
 
+      const fixedMs = 7000 * (fullBoxH > 1000 ? 1 : fullBoxH/1500)
       const backgroundChangeTimeout = setTimeout(() => {
         setTransitionIsExit(false)
         setCurrentBackgroundIndex(newBgIndex)
-      }, 7000)
+      }, fixedMs)
 
       localStorage.setItem('backgroundChangeTimeout', backgroundChangeTimeout)
     }, 3000)
