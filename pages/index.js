@@ -27,8 +27,6 @@ const Home = ({ mainIgFeed, branchesData }) => {
 
   const msPerPixelScroll = 18
 
-  const Multiplier = (val) => val * (fullBoxH > 1000 ? 1 : 1000)
-
   const stopScroll = () => {
     clearInterval(localStorage.getItem('scrollInterval'))
     clearTimeout(localStorage.getItem('backgroundChangeTimeout'))
