@@ -96,7 +96,7 @@ const BranchInfo = ({ hidden, cityData }) => (
         picId => 'https://drive.google.com/uc?export=view&id=' + picId
       )}
     />
-    <Box fontSize={'0.8em'} paddingX={5} width={{ base: '100%', md: '30%' }}>
+    <Box fontSize={'0.7em'} paddingX={5} width={{ base: '100%', md: '30%' }}>
       {cityData.address && <AddressSection cityData={cityData} />}
 
       {(cityData.information || []).length > 0 && (
