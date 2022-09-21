@@ -11,7 +11,11 @@ const Main = ({ children }) => {
         <link rel="apple-touch-icon" href="apple-touch-icon.png" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:site_name" content="Coffee Dojo" />
+        <meta name="twitter:title" content="Coffee Dojo" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="Coffee Dojo" />
+        <meta name="twitter:creator" content="Coffee Dojo" />
+        <meta name="twitter:image" content="%PUBLIC_URL%/card.png" />
         <meta name="og:title" content="Coffee Dojo" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="%PUBLIC_URL%/" />
