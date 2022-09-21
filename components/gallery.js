@@ -48,8 +48,8 @@ const Gallery = ({ images = [] }) => {
   
   return (
     <AspectRatio
-      width={{ base: '100%', md: '80%' }}
-      height={{ base: '100%', md: '80%' }}
+      width={{ base: '100%', md: '85%' }}
+      height={{ base: '100%', md: '85%' }}
       ratio={1}
       overflow="hidden"
     >
