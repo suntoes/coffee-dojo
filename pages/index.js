@@ -52,7 +52,7 @@ const Home = ({ mainIgFeed, branchesData }) => {
       setTransitionIsExit(true)
       playScroll(false, prevYCount, prevBreakCount + 1, newBgIndex)
 
-      const fixedMs = 7000 * (fullBoxH > 1000 ? 1 : fullBoxH/1500)
+      const fixedMs = 7000 * (fullBoxH > 1000 ? 1 : fullBoxH/1300)
       const backgroundChangeTimeout = setTimeout(() => {
         setTransitionIsExit(false)
         setCurrentBackgroundIndex(newBgIndex)
