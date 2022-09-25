@@ -19,29 +19,31 @@ export default function Chakra({ cookies, children }) {
 }
 
 function shuffle(array) {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length,
+    randomIndex
 
   // While there remain elements to shuffle.
   while (currentIndex != 0) {
-
     // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex--
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+    ;[array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex]
+    ]
   }
 
-  return array;
+  return array
 }
 
 export async function getServerSideProps({ req }) {
   const mainIgFeedRequest = await fetch(
-    'https://coffee-dojo-api-v1.herokuapp.com/api/ig/main'
+    'https://coffee-dojo-api.onrender.com/api/ig/main'
   )
   const branchesDataRequest = await fetch(
-    'https://coffee-dojo-api-v1.herokuapp.com/api/ig/branches'
+    'https://coffee-dojo-api.onrender.com/api/ig/branches'
   )
 
   const { recentPosts } = (await mainIgFeedRequest.json()) || []
@@ -49,7 +51,10 @@ export async function getServerSideProps({ req }) {
 
   const branchesData = shuffle(initialBranchesData)
 
-  const ensurePostCount = [...recentPosts.slice(0, 12), ...Array(12 - recentPosts.slice(0, 12).length).fill(1)]
+  const ensurePostCount = [
+    ...recentPosts.slice(0, 12),
+    ...Array(12 - recentPosts.slice(0, 12).length).fill(1)
+  ]
   const mainIgFeed = []
   for (let i = 0; i < ensurePostCount.length; i++) {
     mainIgFeed.push(ensurePostCount[i])

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, useBreakpointValue } from '@chakra-ui/react'
 
 import { useRef, useEffect, useState } from 'react'
 
@@ -6,8 +6,24 @@ import Layout from '../components/layouts/article'
 import ImageBackground from '../components/image-background'
 import PicStrip from '../components/pic-strip'
 import { PrimaryTitle } from '../components/title'
+import CursorAnim from '../components/cursor-animation'
+import { BranchListNavbar } from '../components/navbar'
 
 const Home = ({ mainIgFeed, branchesData }) => {
+  const bgMsVariant = useBreakpointValue({
+    base: 4000,
+    sm: 5000,
+    md: 7000
+  })
+
+  const initialBgMsVariant = useBreakpointValue({
+    base: 5000,
+    sm: 0,
+    md: 0
+  })
+
+  const [userFirstVisit, setUserFirstVisit] = useState(false)
+
   const [fullBoxH, setFullBoxH] = useState(1)
   const [picStripH, setPicStripH] = useState(1)
   const [yOffsetValue, setYOffsetValue] = useState(0)
@@ -19,8 +35,8 @@ const Home = ({ mainIgFeed, branchesData }) => {
 
   const [breakCount, setBreakCount] = useState(0)
   const [onBreak, setOnBreak] = useState(false)
-  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(0)
-  const [transitionIsExit, setTransitionIsExit] = useState(false)
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(-1)
+  const [transitionIsExit, setTransitionIsExit] = useState(true)
   const [docIsVisible, setDocIsVisible] = useState(true)
 
   const refs = useRef({})
@@ -45,30 +61,44 @@ const Home = ({ mainIgFeed, branchesData }) => {
       setStripOpacity(1)
     }, 2800)
 
-    const newBgIndex = prevBgIndex + 1 < branchesData?.length ? prevBgIndex + 1 : 0
+    const newBgIndex =
+      prevBgIndex + 1 < branchesData?.length ? prevBgIndex + 1 : 0
 
     const scrollTimeout = setTimeout(() => {
       setOnBreak(false)
       setTransitionIsExit(true)
       playScroll(false, prevYCount, prevBreakCount + 1, newBgIndex)
 
-      const fixedMs = 7000 * (fullBoxH > 1000 ? 1 : fullBoxH/1300)
-      const backgroundChangeTimeout = setTimeout(() => {
+      const fixedMs = bgMsVariant
+
+      const backgroundChange = () => {
         setTransitionIsExit(false)
         setCurrentBackgroundIndex(newBgIndex)
-      }, fixedMs)
-
+      }
+      const backgroundChangeTimeout = setTimeout(backgroundChange, fixedMs)
       localStorage.setItem('backgroundChangeTimeout', backgroundChangeTimeout)
     }, 3000)
 
     localStorage.setItem('scrollTimeout', scrollTimeout)
   }
 
-  const playScroll = (initial, prevYCount, prevBreakCount=0, prevBgIndex=0) => {
+  const playScroll = (
+    initial,
+    prevYCount,
+    prevBreakCount = 0,
+    prevBgIndex = 0
+  ) => {
     stopScroll()
     let midTriggerCount = 0
     let midTriggerInitialCount = midTriggerInitial
     let yCount = prevYCount || yTransformValue
+
+    if (initial) {
+      setTimeout(() => {
+        setTransitionIsExit(false)
+        setCurrentBackgroundIndex(prevBgIndex)
+      }, initialBgMsVariant)
+    }
 
     const scrollInterval = setInterval(() => {
       yCount++
@@ -79,14 +109,14 @@ const Home = ({ mainIgFeed, branchesData }) => {
       if (initial) {
         if (midTriggerInitialCount <= 1) {
           setMidTriggerInitial(0)
-          breakScroll(yCount, prevBreakCount, prevBgIndex)
+          breakScroll(yCount, prevBreakCount, prevBgIndex, initial)
         }
         midTriggerInitialCount--
       } else {
         midTriggerCount++
         if (midTriggerCount >= midTriggerValue) {
           midTriggerCount = 0
-          breakScroll(yCount, prevBreakCount, prevBgIndex)
+          breakScroll(yCount, prevBreakCount, prevBgIndex, initial)
         }
       }
     }, msPerPixelScroll)
@@ -94,6 +124,11 @@ const Home = ({ mainIgFeed, branchesData }) => {
   }
 
   useEffect(() => {
+    const firstVisit = localStorage.getItem('kohi-dojo-first-visit')
+
+    if (firstVisit) setUserFirstVisit(false)
+    else setUserFirstVisit(true)
+
     setOnBreak(false)
     setTransitionIsExit(false)
     setFullBoxH(refs.current.fullBoxRef?.clientHeight)
@@ -110,7 +145,7 @@ const Home = ({ mainIgFeed, branchesData }) => {
           refs.current?.picStripContainerRef?.clientHeight ||
             refs.current?.fullBoxRef?.clientHeight
         )
-        setTransitionIsExit(false)
+        setTransitionIsExit(true)
         setOnBreak(false)
       }, 500)
     }
@@ -171,27 +206,31 @@ const Home = ({ mainIgFeed, branchesData }) => {
   return (
     <>
       <Layout>
-        {
-          branchesData.map(({gDriveMainPic}, i) =>
-            <ImageBackground
-              key={`branch-background-${i}`}
-              passRef={elem => {
-                refs.current.fullBoxRef = elem
-              }}
-              opacity={i === currentBackgroundIndex && !transitionIsExit ? 1 : 0}
-              transition={
-                transitionIsExit ?
-                "opacity 4000ms cubic-bezier(0, 0, 0.1, 1) 0s" : 
-                "opacity 4000ms cubic-bezier(0.99, 0, 1, 1) 0s"
-              }
-              background={`url("https://drive.google.com/uc?export=view&id=${gDriveMainPic}") no-repeat center center fixed`}
-            />
-          )
-        }
-        {breakCount > 0 && (
+        <BranchListNavbar branchesData={branchesData} />
+        {onBreak && userFirstVisit ? (
+          <CursorAnim animKey={breakCount} />
+        ) : (
+          <></>
+        )}
+        {branchesData.map(({ gDriveMainPic }, i) => (
+          <ImageBackground
+            key={`branch-background-${i}`}
+            passRef={elem => {
+              refs.current.fullBoxRef = elem
+            }}
+            opacity={i === currentBackgroundIndex && !transitionIsExit ? 1 : 0}
+            transition={
+              transitionIsExit
+                ? 'opacity 4000ms cubic-bezier(0, 0, 0.1, 1) 0s'
+                : 'opacity 4000ms cubic-bezier(0.99, 0, 1, 1) 0s'
+            }
+            background={`url("https://drive.google.com/uc?export=view&id=${gDriveMainPic}") no-repeat center center fixed`}
+          />
+        ))}
+        {onBreak && (
           <PrimaryTitle
             zIndex={onBreak ? 99 : 1}
-            city={branchesData[currentBackgroundIndex].city}
+            city={branchesData[currentBackgroundIndex]?.city}
             motionKey={breakCount}
           />
         )}

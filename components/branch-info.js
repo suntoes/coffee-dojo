@@ -11,12 +11,17 @@ const AddressSection = ({ cityData }) => (
       fontWeight={900}
       letterSpacing={[2, 4, 6]}
       mb={1}
-      mt={{base: 7, md: 0}}
+      mt={{ base: 7, md: 0 }}
     >
       ADDRESS
     </Heading>
     {cityData.gMapEmbedSrc && (
-      <AspectRatio width={{ base: '70%', md: '100%' }} ratio={16 / 9} mb={2} mt={1}>
+      <AspectRatio
+        width={{ base: '70%', md: '100%' }}
+        ratio={16 / 9}
+        mb={2}
+        mt={1}
+      >
         <iframe src={cityData.gMapEmbedSrc} />
       </AspectRatio>
     )}

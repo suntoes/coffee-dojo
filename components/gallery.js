@@ -39,13 +39,13 @@ const Gallery = ({ images = [] }) => {
   }
 
   useEffect(() => {
-    clearTimeout(localStorage.getItem("autoSwipe"))
+    clearTimeout(localStorage.getItem('autoSwipe'))
     const autoSwipe = setTimeout(() => {
       paginate(1)
     }, 5000)
-    localStorage.setItem("autoSwipe", autoSwipe)
+    localStorage.setItem('autoSwipe', autoSwipe)
   }, [page])
-  
+
   return (
     <AspectRatio
       width={{ base: '100%', md: '85%' }}

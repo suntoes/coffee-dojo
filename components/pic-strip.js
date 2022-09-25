@@ -38,7 +38,7 @@ const PicStrip = ({
         refs.current.picStripContainerRef = elem
       }}
       key="pic-strip-0"
-      transform={`translateY(${picStripH * -0 + yOffsetValue}px)`}
+      transform={`translate3d(0px, ${picStripH * -0 + yOffsetValue}px, 0px)`}
     >
       {mainIgFeed?.map((url, _i) =>
         url === 0 ? (
@@ -52,21 +52,18 @@ const PicStrip = ({
             }}
             key={`sub-pic-strip-0-${_i}`}
           />
-        ) :
-        url === 1 ? (
+        ) : url === 1 ? (
           <CoffeeDojoLogo key={`sub-pic-strip-0-${_i}`} />
+        ) : (_i + 1) % 2 === 0 ? (
+          <IgSmallPic
+            yTransformValue={yTransformValue}
+            key={`sub-pic-strip-0-${_i}`}
+            src={url}
+            backgroundTriggerPoint={backgroundTriggerPoint}
+            backgroundTriggerCallback={backgroundTriggerCallback}
+          />
         ) : (
-          (_i + 1) % 2 === 0 ? (
-            <IgSmallPic
-              yTransformValue={yTransformValue}
-              key={`sub-pic-strip-0-${_i}`}
-              src={url}
-              backgroundTriggerPoint={backgroundTriggerPoint}
-              backgroundTriggerCallback={backgroundTriggerCallback}
-            />
-          ) : (
-            <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
-          )
+          <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
         )
       )}
     </PicSubStrip>
@@ -79,21 +76,18 @@ const PicStrip = ({
         {subPicStripArr?.map((url, _i) =>
           url === 0 ? (
             <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
-          ) :
-          url === 1 ? (
+          ) : url === 1 ? (
             <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
+          ) : (_i + 1) % 2 === 0 ? (
+            <IgSmallPic
+              yTransformValue={yTransformValue}
+              key={`sub-pic-strip-0-${_i}`}
+              src={url}
+              backgroundTriggerPoint={backgroundTriggerPoint}
+              backgroundTriggerCallback={backgroundTriggerCallback}
+            />
           ) : (
-            (_i + 1) % 2 === 0 ? (
-              <IgSmallPic
-                yTransformValue={yTransformValue}
-                key={`sub-pic-strip-0-${_i}`}
-                src={url}
-                backgroundTriggerPoint={backgroundTriggerPoint}
-                backgroundTriggerCallback={backgroundTriggerCallback}
-              />
-            ) : (
-              <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
-            )
+            <IgSmallPic key={`sub-pic-strip-0-${_i}`} src={url} />
           )
         )}
       </PicSubStrip>

@@ -8,7 +8,7 @@ import { Box, Text, Container, Stack, Link } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import Layout from '../../components/layouts/article'
-import Navbar from '../../components/navbar'
+import { BranchListNavbar, BranchNavbar } from '../../components/navbar'
 import BranchInfo from '../../components/branch-info'
 import BranchIgTags from '../../components/branch-ig-tags'
 
@@ -22,7 +22,7 @@ const City = ({ branchesData }) => {
     string[0]?.toUpperCase() + string.slice(1)?.toLowerCase()
 
   useEffect(() => {
-    const filterBranches = branchesData.filter(
+    const filterBranches = branchesData?.filter(
       cityObj => titleCase(cityObj.city || '') === titleCase(cityParams || '')
     )
     setCityData(filterBranches[0] || {})
@@ -30,7 +30,8 @@ const City = ({ branchesData }) => {
 
   return (
     <Layout title={titleCase(cityParams)}>
-      <Navbar city={cityParams} />
+      <BranchListNavbar branchesData={branchesData} />
+      <BranchNavbar city={cityParams} />
       <Container
         maxW={1100}
         wrap="wrap"

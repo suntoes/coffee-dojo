@@ -1,16 +1,20 @@
-import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 
 import { Box, Heading, LinkBox } from '@chakra-ui/react'
 
 import { CoffeeDojoLogo, CoffeeDojoLogoSmall } from './logo'
 import { motion } from 'framer-motion'
 
-export const PrimaryTitle = ({ city, motionKey, zIndex }) => (
-  <NextLink href={`/city/${city.toLowerCase()}`} passHref scroll={false}>
+export const PrimaryTitle = ({ city, motionKey, zIndex }) => {
+  const router = useRouter()
+  return (
     <Box
       display="flex"
+      onClick={() => {
+        localStorage.setItem('kohi-dojo-first-visit', false)
+        router.push(`/city/${city?.toLowerCase()}`)
+      }}
       position="fixed"
-      cursor="pointer"
       zIndex={zIndex}
       justifyContent="center"
       alignItems="center"
@@ -20,8 +24,15 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => (
       <Box
         display="flex"
         width="full"
+        cursor="pointer"
         justifyContent="center"
         alignItems="center"
+        css={`
+          &:hover {
+            text-decoration: underline;
+            text-underline-offset: 6px;
+          }
+        `}
       >
         <Heading
           as="h1"
@@ -79,8 +90,8 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => (
         </Heading>
       </Box>
     </Box>
-  </NextLink>
-)
+  )
+}
 
 export const SecondaryTitle = ({ city }) => (
   <Box display="flex" justifyContent="center" alignItems="center">

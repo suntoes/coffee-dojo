@@ -15,11 +15,20 @@ const Main = ({ children }) => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="Coffee Dojo" />
         <meta name="twitter:creator" content="Coffee Dojo" />
-        <meta name="twitter:image" content="https://www.coffee-dojo.com/card.png" />
+        <meta
+          name="twitter:image"
+          content="https://www.coffee-dojo.com/card.png"
+        />
         <meta name="og:title" content="Coffee Dojo" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.coffee-dojo.com/card.png" />
-        <meta property="og:description" content="A Japanese inspired coffee shop." />
+        <meta
+          property="og:image"
+          content="https://www.coffee-dojo.com/card.png"
+        />
+        <meta
+          property="og:description"
+          content="A Japanese inspired coffee shop."
+        />
         <title>Coffee Dojo</title>
       </Head>
 
