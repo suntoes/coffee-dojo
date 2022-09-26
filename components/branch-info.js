@@ -22,7 +22,7 @@ const AddressSection = ({ cityData }) => (
         mb={2}
         mt={1}
       >
-        <iframe src={cityData.gMapEmbedSrc} />
+        <iframe src={cityData.gMapEmbedSrc} tabIndex={-1} />
       </AspectRatio>
     )}
     <Text

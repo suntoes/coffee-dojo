@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router'
 
+import { useState } from 'react'
+
 import { Box, Heading, LinkBox } from '@chakra-ui/react'
 
 import { CoffeeDojoLogo, CoffeeDojoLogoSmall } from './logo'
@@ -7,13 +9,24 @@ import { motion } from 'framer-motion'
 
 export const PrimaryTitle = ({ city, motionKey, zIndex }) => {
   const router = useRouter()
+  const [hovered, setHovered] = useState(false)
+
+  const linkProps = {
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+    onClick: () => {
+      localStorage.setItem('kohi-dojo-first-visit', false)
+      router.push(`/city/${city?.toLowerCase()}`)
+    },
+    cursor: 'pointer',
+    css: hovered
+      ? `text-decoration: underline; text-underline-offset: 6px;`
+      : ``
+  }
+
   return (
     <Box
       display="flex"
-      onClick={() => {
-        localStorage.setItem('kohi-dojo-first-visit', false)
-        router.push(`/city/${city?.toLowerCase()}`)
-      }}
       position="fixed"
       zIndex={zIndex}
       justifyContent="center"
@@ -24,17 +37,11 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => {
       <Box
         display="flex"
         width="full"
-        cursor="pointer"
         justifyContent="center"
         alignItems="center"
-        css={`
-          &:hover {
-            text-decoration: underline;
-            text-underline-offset: 6px;
-          }
-        `}
       >
         <Heading
+          {...linkProps}
           as="h1"
           width="40%"
           letterSpacing={[3, 6, 8]}
@@ -56,7 +63,6 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => {
         </Heading>
         <motion.div
           key={motionKey}
-          cursor="pointer"
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 1, 1, 0] }}
           transition={{
@@ -64,11 +70,12 @@ export const PrimaryTitle = ({ city, motionKey, zIndex }) => {
             times: [0, 0.1, 0.9, 1]
           }}
         >
-          <LinkBox>
+          <LinkBox {...linkProps}>
             <CoffeeDojoLogo />
           </LinkBox>
         </motion.div>
         <Heading
+          {...linkProps}
           as="h1"
           width="40%"
           pl={['3px', '6px', '8px']}

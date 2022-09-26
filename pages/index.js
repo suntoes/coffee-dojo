@@ -1,4 +1,4 @@
-import { Box, useBreakpointValue } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 
 import { useRef, useEffect, useState } from 'react'
 
@@ -10,24 +10,13 @@ import CursorAnim from '../components/cursor-animation'
 import { BranchListNavbar } from '../components/navbar'
 
 const Home = ({ mainIgFeed, branchesData }) => {
-  const bgMsVariant = useBreakpointValue({
-    base: 4000,
-    sm: 5000,
-    md: 7000
-  })
-
-  const initialBgMsVariant = useBreakpointValue({
-    base: 5000,
-    sm: 0,
-    md: 0
-  })
-
+  const refs = useRef({})
   const [userFirstVisit, setUserFirstVisit] = useState(false)
 
   const [fullBoxH, setFullBoxH] = useState(1)
   const [picStripH, setPicStripH] = useState(1)
+
   const [yOffsetValue, setYOffsetValue] = useState(0)
-  const [yTransformValue, setYTransformValue] = useState(0)
   const [midTriggerValue, setMidTriggerValue] = useState(0)
   const [midTriggerInitial, setMidTriggerInitial] = useState(0)
   const [stripOpacity, setStripOpacity] = useState(1)
@@ -39,12 +28,10 @@ const Home = ({ mainIgFeed, branchesData }) => {
   const [transitionIsExit, setTransitionIsExit] = useState(true)
   const [docIsVisible, setDocIsVisible] = useState(true)
 
-  const refs = useRef({})
-
-  const msPerPixelScroll = 18
+  const scrollMs = 5000
 
   const stopScroll = () => {
-    clearInterval(localStorage.getItem('scrollInterval'))
+    clearTimeout(localStorage.getItem('breakScrollTimer'))
     clearTimeout(localStorage.getItem('backgroundChangeTimeout'))
     clearTimeout(localStorage.getItem('scrollTimeout'))
   }
@@ -65,11 +52,13 @@ const Home = ({ mainIgFeed, branchesData }) => {
       prevBgIndex + 1 < branchesData?.length ? prevBgIndex + 1 : 0
 
     const scrollTimeout = setTimeout(() => {
+      const fixedMs = Math.round(scrollMs / 2)
+      const nextMode =
+        prevYCount + midTriggerValue > picStripH ? 'last' : 'normal'
+
       setOnBreak(false)
       setTransitionIsExit(true)
-      playScroll(false, prevYCount, prevBreakCount + 1, newBgIndex)
-
-      const fixedMs = bgMsVariant
+      playScroll(nextMode, prevYCount, prevBreakCount + 1, newBgIndex)
 
       const backgroundChange = () => {
         setTransitionIsExit(false)
@@ -83,46 +72,94 @@ const Home = ({ mainIgFeed, branchesData }) => {
   }
 
   const playScroll = (
-    initial,
-    prevYCount,
+    mode,
+    prevYCount = 0,
     prevBreakCount = 0,
     prevBgIndex = 0
   ) => {
+    // Clean timeouts
     stopScroll()
-    let midTriggerCount = 0
-    let midTriggerInitialCount = midTriggerInitial
-    let yCount = prevYCount || yTransformValue
 
-    if (initial) {
+    // Bg rule for initial
+    if (mode === 'initial') {
       setTimeout(() => {
         setTransitionIsExit(false)
         setCurrentBackgroundIndex(prevBgIndex)
-      }, initialBgMsVariant)
+      }, Math.round((midTriggerInitial / midTriggerValue) * scrollMs))
     }
 
-    const scrollInterval = setInterval(() => {
-      yCount++
-      if (yCount >= picStripH) yCount = 0
-      const picStripNode = refs.current.picStrip
+    // Solve with mode variants
+    const picStripNode = refs.current.picStrip
+    let yCount = prevYCount
+    let msToServe
+
+    const initialNormalCallback = () => {
+      const breakScrollTimer = setTimeout(
+        () => breakScroll(yCount, prevBreakCount, prevBgIndex),
+        msToServe
+      )
+      localStorage.setItem('breakScrollTimer', breakScrollTimer)
+
+      // Apply to DOM
+      picStripNode.style.transition = `opacity 1500ms, transform ${msToServe}ms linear 0ms`
+      picStripNode.style.transform = `translate3d(0px, ${yCount}px, 0px)`
+    }
+
+    const lastCallback = () => {
+      // Apply to DOM
+      picStripNode.style.transition = `opacity 1500ms, transform ${msToServe}ms linear 0ms`
       picStripNode.style.transform = `translate3d(0px, ${yCount}px, 0px)`
 
-      if (initial) {
-        if (midTriggerInitialCount <= 1) {
-          setMidTriggerInitial(0)
-          breakScroll(yCount, prevBreakCount, prevBgIndex, initial)
-        }
-        midTriggerInitialCount--
-      } else {
-        midTriggerCount++
-        if (midTriggerCount >= midTriggerValue) {
-          midTriggerCount = 0
-          breakScroll(yCount, prevBreakCount, prevBgIndex, initial)
-        }
-      }
-    }, msPerPixelScroll)
-    localStorage.setItem('scrollInterval', scrollInterval)
+      const newBgIndex =
+        prevBgIndex + 1 < branchesData?.length ? prevBgIndex + 1 : 0
+      const lastScrollTimer = setTimeout(() => {
+        stopScroll()
+        // Reset DOM
+        picStripNode.style.transition = `opacity 1500ms, transform ${0}ms linear 0ms`
+        picStripNode.style.transform = `translate3d(0px, ${0}px, 0px)`
+        playScroll('repeat', 0, prevBreakCount + 1, newBgIndex)
+      }, msToServe)
+      localStorage.setItem('lastScrollTimer', lastScrollTimer)
+    }
+
+    const repeatCallback = () => {
+      const breakScrollTimer = setTimeout(
+        () => breakScroll(yCount, prevBreakCount, prevBgIndex),
+        msToServe
+      )
+      localStorage.setItem('breakScrollTimer', breakScrollTimer)
+
+      // Apply to DOM
+      picStripNode.style.transition = `opacity 1500ms, transform ${0}ms linear 0ms`
+      picStripNode.style.transform = `translate3d(0px, ${yCount}px, 0px)`
+    }
+
+    switch (true) {
+      case mode === 'initial':
+        yCount += midTriggerInitial
+        msToServe = (midTriggerInitial / midTriggerValue) * scrollMs
+        initialNormalCallback()
+        break
+      case mode === 'normal':
+        yCount += midTriggerValue
+        msToServe = scrollMs
+        initialNormalCallback()
+        break
+      case mode === 'last':
+        const difference =
+          Math.round(picStripH - prevYCount) + midTriggerInitial
+        yCount += difference
+        msToServe = Math.round(difference / midTriggerValue) * scrollMs
+        lastCallback()
+        break
+      case mode === 'repeat':
+        yCount += midTriggerInitial
+        repeatCallback()
+        break
+    }
   }
 
+  // Get initial state variables and add some listener
   useEffect(() => {
     const firstVisit = localStorage.getItem('kohi-dojo-first-visit')
 
@@ -150,13 +187,12 @@ const Home = ({ mainIgFeed, branchesData }) => {
       }, 500)
     }
 
-    window.addEventListener('resize', resizeCallback)
-
     const visibilityChangeCallback = () => {
       if (document.hidden) setDocIsVisible(false)
       else setDocIsVisible(true)
     }
 
+    window.addEventListener('resize', resizeCallback)
     window.addEventListener('visibilitychange', visibilityChangeCallback)
 
     return () => {
@@ -166,8 +202,12 @@ const Home = ({ mainIgFeed, branchesData }) => {
     }
   }, [])
 
+  // Get state variables needed to recurse computation
   useEffect(() => {
     stopScroll()
+    const picStripNode = refs.current.picStrip
+    picStripNode.style.transition = `opacity 1500ms, transform ${0}ms linear 0ms`
+    picStripNode.style.transform = `translate3d(0px, ${0}px, 0px)`
 
     const midTriggerIncrement = Math.round(
       (refs.current.lastLogoRef?.getBoundingClientRect().height + 20) / 2
@@ -190,17 +230,19 @@ const Home = ({ mainIgFeed, branchesData }) => {
 
     setMidTriggerInitial(
       _midTriggerInitial !== Infinity
-        ? _midTriggerInitial + midTriggerIncrement
+        ? _midTriggerInitial + midTriggerIncrement > _midTriggerValue
+          ? _midTriggerInitial + midTriggerIncrement - _midTriggerValue
+          : _midTriggerInitial + midTriggerIncrement
         : 0
     )
     setMidTriggerValue(_midTriggerValue)
     setYOffsetValue(fullBoxH - picStripH)
-    setYTransformValue(0)
     setAddPicStripArr(arr)
   }, [fullBoxH])
 
+  // Make sure a key variable exists before recursing animation
   useEffect(() => {
-    if (midTriggerInitial) playScroll(true)
+    if (midTriggerInitial) playScroll('initial')
   }, [midTriggerInitial])
 
   return (
@@ -221,8 +263,12 @@ const Home = ({ mainIgFeed, branchesData }) => {
             opacity={i === currentBackgroundIndex && !transitionIsExit ? 1 : 0}
             transition={
               transitionIsExit
-                ? 'opacity 4000ms cubic-bezier(0, 0, 0.1, 1) 0s'
-                : 'opacity 4000ms cubic-bezier(0.99, 0, 1, 1) 0s'
+                ? `opacity ${Math.round(
+                    scrollMs * 0.4
+                  )}ms cubic-bezier(0, 0, 0.1, 1) 0s`
+                : `opacity ${Math.round(
+                    scrollMs * 0.4
+                  )}ms cubic-bezier(0.99, 0, 1, 1) 500ms`
             }
             background={`url("https://drive.google.com/uc?export=view&id=${gDriveMainPic}") no-repeat center center fixed`}
           />
@@ -245,7 +291,6 @@ const Home = ({ mainIgFeed, branchesData }) => {
             opacity={stripOpacity}
             picStripH={picStripH}
             yOffsetValue={yOffsetValue}
-            yTransformValue={yTransformValue}
             mainIgFeed={mainIgFeed}
             addPicStripArr={addPicStripArr}
             backgroundTriggerPoint={Math.round(fullBoxH / 2)}

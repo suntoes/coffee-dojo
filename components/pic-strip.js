@@ -19,7 +19,6 @@ const PicStrip = ({
   opacity,
   picStripH,
   yOffsetValue,
-  yTransformValue,
   mainIgFeed,
   addPicStripArr,
   backgroundTriggerPoint,
@@ -31,6 +30,7 @@ const PicStrip = ({
     }}
     opacity={opacity}
     transition="opacity 1500ms"
+    transitionTimingFunction="linear"
     centerContent
   >
     <PicSubStrip
@@ -56,7 +56,6 @@ const PicStrip = ({
           <CoffeeDojoLogo key={`sub-pic-strip-0-${_i}`} />
         ) : (_i + 1) % 2 === 0 ? (
           <IgSmallPic
-            yTransformValue={yTransformValue}
             key={`sub-pic-strip-0-${_i}`}
             src={url}
             backgroundTriggerPoint={backgroundTriggerPoint}
@@ -80,7 +79,6 @@ const PicStrip = ({
             <CoffeeDojoLogo key={`sub-pic-strip-${i + 1}-${_i}`} />
           ) : (_i + 1) % 2 === 0 ? (
             <IgSmallPic
-              yTransformValue={yTransformValue}
               key={`sub-pic-strip-0-${_i}`}
               src={url}
               backgroundTriggerPoint={backgroundTriggerPoint}

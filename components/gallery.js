@@ -32,10 +32,26 @@ const swipePower = (offset, velocity) => {
 
 const Gallery = ({ images = [] }) => {
   const [[page, direction], setPage] = useState([0, 0])
-  const imageIndex = wrap(0, images.length, page)
 
   const paginate = newDirection => {
-    setPage([page + newDirection, newDirection])
+    let controlledPage
+    let controlledDirection
+    switch (true) {
+      case page + newDirection < 0:
+        controlledPage = images.length - 1
+        controlledDirection = -1
+        break
+      case page + newDirection > images.length - 1:
+        controlledPage = 0
+        controlledDirection = 1
+        break
+      default:
+        controlledPage = page + newDirection
+        controlledDirection = newDirection
+        break
+    }
+    console.log(page + newDirection, controlledPage, controlledDirection)
+    setPage([controlledPage, newDirection])
   }
 
   useEffect(() => {
@@ -76,7 +92,6 @@ const Gallery = ({ images = [] }) => {
             bg="#cc990050"
             css={{ backdropFilter: 'blur(10px)' }}
           >
-            {' '}
             {'<'}
           </Box>
           <Box
@@ -93,36 +108,39 @@ const Gallery = ({ images = [] }) => {
             css={{ backdropFilter: 'blur(10px)' }}
             bg="#cc990050"
           >
-            {' '}
             {'>'}
           </Box>
         </Box>
-        <motion.img
-          key={page}
-          alt="Coffee Dojo"
-          src={images[imageIndex]}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: 'spring', stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 }
-          }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={1}
-          onDragEnd={(e, { offset, velocity }) => {
-            const swipe = swipePower(offset.x, velocity.x)
+        {images.map((url, i) => (
+          <AnimatePresence key={`branch-img-${i}`}>
+            <motion.img
+              key={page}
+              alt="Coffee Dojo"
+              src={url}
+              custom={direction}
+              variants={variants}
+              hidden={i !== page}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                opacity: { duration: 0.2 }
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={(e, { offset, velocity }) => {
+                const swipe = swipePower(offset.x, velocity.x)
 
-            if (swipe < -swipeConfidenceThreshold) {
-              paginate(1)
-            } else if (swipe > swipeConfidenceThreshold) {
-              paginate(-1)
-            }
-          }}
-        />
+                if (swipe < -swipeConfidenceThreshold) {
+                  paginate(1)
+                } else if (swipe > swipeConfidenceThreshold) {
+                  paginate(-1)
+                }
+              }}
+            />
+          </AnimatePresence>
+        ))}
       </AnimatePresence>
     </AspectRatio>
   )
