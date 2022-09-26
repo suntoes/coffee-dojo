@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { AspectRatio, Box, useColorModeValue } from '@chakra-ui/react'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { wrap } from 'popmotion'
 
 const variants = {
   enter: direction => {
