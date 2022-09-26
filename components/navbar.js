@@ -68,7 +68,7 @@ export const BranchListNavbar = ({ branchesData }) => {
                 borderRadius="none"
                 transition="none"
                 transform={{
-                  base: 'rotate(-90deg) translate3d(-88888px, 75px, 0px)',
+                  base: 'rotate(-90deg) translate3d(-88888px, 63px, 0px)',
                   md: 'rotate(0deg) translate3d(0px, 88888px, 0px)'
                 }}
                 css={`
