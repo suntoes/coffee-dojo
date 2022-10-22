@@ -40,10 +40,10 @@ function shuffle(array) {
 
 export async function getServerSideProps({ req }) {
   const mainIgFeedRequest = await fetch(
-    'https://coffee-dojo-api-v1.herokuapp.com/api/ig/main'
+    'https://coffee-dojo-api.onrender.com/api/ig/main'
   )
   const branchesDataRequest = await fetch(
-    'https://coffee-dojo-api-v1.herokuapp.com/api/ig/branches'
+    'https://coffee-dojo-api.onrender.com/api/ig/branches'
   )
 
   const { recentPosts } = (await mainIgFeedRequest.json()) || []
