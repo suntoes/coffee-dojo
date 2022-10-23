@@ -104,7 +104,7 @@ const BranchInfo = ({ hidden, cityData }) => (
       )}
     />
     <Box fontSize={'0.7em'} paddingX={5} width={{ base: '100%', md: '30%' }}>
-      {cityData.address || cityData.gMapEmbedSrc && <AddressSection cityData={cityData} />}
+      {(cityData.address || cityData.gMapEmbedSrc) && <AddressSection cityData={cityData} />}
 
       {(cityData.information || []).length > 0 && (
         <InfoSection cityData={cityData} />
