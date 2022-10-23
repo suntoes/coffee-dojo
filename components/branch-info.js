@@ -25,14 +25,16 @@ const AddressSection = ({ cityData }) => (
         <iframe src={cityData.gMapEmbedSrc} tabIndex={-1} />
       </AspectRatio>
     )}
-    <Text
-      fontSize="1em"
-      color="#848484"
-      whiteSpace="pre-wrap"
-      letterSpacing={[0, 1, 2]}
-    >
-      {cityData.address}
-    </Text>
+    {cityData.address && (
+      <Text
+        fontSize="1em"
+        color="#848484"
+        whiteSpace="pre-wrap"
+        letterSpacing={[0, 1, 2]}
+      >
+        {cityData.address}
+      </Text>
+    )}
   </>
 )
 
@@ -102,7 +104,7 @@ const BranchInfo = ({ hidden, cityData }) => (
       )}
     />
     <Box fontSize={'0.7em'} paddingX={5} width={{ base: '100%', md: '30%' }}>
-      {cityData.address && <AddressSection cityData={cityData} />}
+      {cityData.address || cityData.gMapEmbedSrc && <AddressSection cityData={cityData} />}
 
       {(cityData.information || []).length > 0 && (
         <InfoSection cityData={cityData} />
