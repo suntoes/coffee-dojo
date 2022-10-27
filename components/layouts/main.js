@@ -27,7 +27,7 @@ const Main = ({ children }) => {
         />
         <meta
           property="og:description"
-          content="A Japanese inspired coffee shop."
+          content="Coffee Dojo is a Japanese inspired cafe based in the Philippines."
         />
         <title>Coffee Dojo</title>
       </Head>
